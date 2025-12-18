@@ -6,12 +6,14 @@ from .models import Applications
 from .serializers import ApplicationSerializer
 from rest_framework import status
 
+from django.shortcuts import get_object_or_404
+
 # Create your views here.
 @api_view(["GET"])
 def health(request):
     return Response({"status": "OK"})
 
-@api_view(["GET", "POST"])
+@api_view(["GET", "POST"])                      # only allows get and post request
 def application_list_create(request):
     if request.method == "GET":
         apps = Applications.objects.all().order_by("-updated_at")   # gets all the objects(applications) from database
@@ -25,3 +27,17 @@ def application_list_create(request):
             serializer.save()                                       # ORM converts the python instance into SQL which gets stored in database
             return Response(serializer.data, status=status.HTTP_201_CREATED)    
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(["PATCH", "DELETE"])                  # only allows patch and delete request
+def application_detail(request, pk):
+    app = get_object_or_404(Applications, pk=pk)    # get the appplication whose id is pk 
+    
+    if request.method == "PATCH":                
+        serializer = ApplicationSerializer(app, data=request.data, partial=True)  # # validate incoming JSON and update the existing Python model instance
+        if serializer.is_valid():     
+            serializer.save()                  # save that updated application
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    app.delete()                      # delete that particular application from data 
+    return Response(status=status.HTTP_204_NO_CONTENT)
