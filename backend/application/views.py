@@ -1,6 +1,7 @@
 from django.shortcuts import render
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 
 from .models import Applications
 from .serializers import ApplicationSerializer
@@ -10,6 +11,7 @@ from django.shortcuts import get_object_or_404
 
 # Create your views here.
 @api_view(["GET"])
+@permission_classes([AllowAny])
 def health(request):
     return Response({"status": "OK"})
 
