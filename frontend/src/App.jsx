@@ -6,7 +6,7 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   return isLoggedIn ? (
-    <Dashboard />
+    <Dashboard onLogout={() => setIsLoggedIn(false)} />
   ) : (
     <Login onLogin={() => setIsLoggedIn(true)} />
   );
