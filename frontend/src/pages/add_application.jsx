@@ -5,19 +5,24 @@ import { useNavigate } from "react-router-dom";
 function AddApplications() {
     const [company, setCompany] = useState("");
     const [role, setRole] = useState("");
-    const [status, setStatus] = useState("Applied");
+    const [status, setStatus] = useState("APPLIED");
     const [message, setMessage] = useState("");
+    const [submitting, setSubmitting] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setMessage("");
+        setSubmitting(true);
 
         try {
-            await api.post("applications/", {company, role, status});
+            await api.post("/applications/", {company, role, status});
             navigate("/dashboard/");
         } catch(err) {
             console.log("ADD ERROR:", err?.response?.data);
             setMessage("❌ Failed to add.");
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -33,7 +38,9 @@ function AddApplications() {
                 <option value="OA">Online Assessment</option>
                 <option value="REJECTED">Rejected</option>
             </select>
-            <button type="submit">Add</button>
+            <button type="submit" disabled={submitting}>
+                {submitting ? "Saving...": "Add"}
+            </button>
         </form>
 
         {message && <p>{message}</p>}
