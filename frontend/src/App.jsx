@@ -3,6 +3,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AddApplications from "./pages/add_application";
+import EditApplication from "./pages/edit_application";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -16,6 +17,7 @@ function App() {
           <>
             <Route path="dashboard/" element={<Dashboard onLogout={() => setIsLoggedIn(false)} />} />
             <Route path="add-applications/" element={<AddApplications />} />
+            <Route path="/edit-application/:id/" element={<EditApplication />} />
           </>
         )}
       </Routes>
