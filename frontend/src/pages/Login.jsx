@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../api";
 
 function Login({ onLogin }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();    // stops page reload
@@ -15,6 +17,8 @@ function Login({ onLogin }) {
       if (res.data?.login === true || res.data?.Login === true) {
         setMessage("✅ Logged in!");
         onLogin();
+        // navigate to dashboard after successful login
+        navigate('/dashboard/');
       } else {
         setMessage("❌ Login failed");
       }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../api";
+import { useNavigate } from "react-router-dom";
 
 function Dashboard({ onLogout }) {
   const [apps, setApps] = useState([]);
@@ -13,13 +14,14 @@ function Dashboard({ onLogout }) {
     try {
         const res = await api.get("applications/");
         setApps(res.data);
-    } catch(err) {
-        if (err?.response?.status === 401) {
-            setErrorMsg("Session expired. Please login again.");
-            onLogout?.();
-        } else {
-            setErrorMsg("Failed to load applications.");
-        }
+  } catch(err) {
+    if (err?.response?.status === 401) {
+      setErrorMsg("Session expired. Please login again.");
+      onLogout?.();
+      try { navigate('/login/'); } catch(e) {}
+    } else {
+      setErrorMsg("Failed to load applications.");
+    }
     } finally {
         setLoading(false);
     }
@@ -29,11 +31,19 @@ function Dashboard({ onLogout }) {
     fetchApplications();
   }, [])
 
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    onLogout?.();
+    navigate('/login/');
+  };
+
   return (
     <div className="dashboard-main">
       <div className="dash-heading">
-        <h2>Dashboard</h2>
-        <button onClick={onLogout}>Logout</button>
+  <h2>Dashboard</h2>
+  <button type="button" onClick={handleLogout}>Logout</button> <br />
+        <button onClick={() => navigate("/add-applications/")}>Add Applications</button>
       </div>
       <div className="dash-body">
         {loading && <p>Loading Applications...</p>}
